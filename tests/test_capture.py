@@ -12,7 +12,10 @@ from ios_ble_capture.capture import CaptureFormatError, import_capture, write_ra
 from ios_ble_capture.models import Direction
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from pathlib import Path
+
+    from ios_ble_capture.models import AttEvent
 
 _BASE_TIMESTAMP = 1_785_302_400
 _LINK_TYPE_H4_WITH_PHDR = 201
@@ -186,14 +189,19 @@ def test_rejects_incomplete_acl_and_l2cap_fragments() -> None:
     assert import_capture(_pcap([incomplete_l2cap]), allow_truncated=True).events == ()
 
 
-def test_raw_runs_are_private_and_retain_unredacted_jsonl(tmp_path: Path) -> None:
+def test_raw_runs_are_private_and_write_events_incrementally(tmp_path: Path) -> None:
     trace = import_capture(_pcap([_connect(0x40, "10:20:30:40:50:60"), _att(0x40, b"\xde\xad")]))
     run_directory = tmp_path / "run"
 
-    write_raw_run(run_directory, trace.events)
+    def interrupted_events() -> Iterator[AttEvent]:
+        yield trace.events[0]
+        raise OSError("source interrupted")
 
-    assert stat.S_IMODE(run_directory.stat().st_mode) == _PRIVATE_DIRECTORY_MODE
+    with pytest.raises(OSError, match="source interrupted"):
+        write_raw_run(run_directory, interrupted_events())
+
     events_path = run_directory / "events.jsonl"
+    assert stat.S_IMODE(run_directory.stat().st_mode) == _PRIVATE_DIRECTORY_MODE
     assert stat.S_IMODE(events_path.stat().st_mode) == _PRIVATE_FILE_MODE
     assert json.loads(events_path.read_text(encoding="utf-8"))["value_hex"] == "dead"
 

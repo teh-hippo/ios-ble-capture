@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Final
 
 from ios_ble_capture.errors import CaptureDataError
 from ios_ble_capture.models import AttEvent, Direction
-from ios_ble_capture.storage import PRIVATE_DIRECTORY_MODE, write_private_text
+from ios_ble_capture.storage import PRIVATE_DIRECTORY_MODE, write_private_chunks
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
@@ -198,9 +198,9 @@ def write_raw_run(
         raise CaptureDataError(f"raw run path is not a directory: {run_directory}")
     run_directory.mkdir(parents=True, exist_ok=True, mode=PRIVATE_DIRECTORY_MODE)
     run_directory.chmod(PRIVATE_DIRECTORY_MODE)
-    write_private_text(
+    write_private_chunks(
         run_directory / "events.jsonl",
-        "".join(json.dumps(event.to_record(), sort_keys=True, separators=(",", ":")) + "\n" for event in events),
+        ((json.dumps(event.to_record(), sort_keys=True, separators=(",", ":")) + "\n").encode() for event in events),
     )
 
 

@@ -11,22 +11,43 @@ from ios_ble_capture.run import Hook
 if TYPE_CHECKING:
     from pathlib import Path
 
-STEP_KINDS: Final = frozenset(
-    {
-        "assert",
-        "capture",
-        "decode",
-        "diff",
-        "launch",
-        "mark",
-        "report",
-        "screenshot",
-        "swipe",
-        "tap",
-        "type",
-        "wait",
-    }
-)
+STEP_ARGUMENTS: Final[dict[str, tuple[set[str], set[str]]]] = {
+    "assert": ({"file", "equals"}, {"file", "equals"}),
+    "capture": ({"udid", "host", "output"}, {"udid", "host", "output"}),
+    "decode": (
+        {
+            "target_path",
+            "ksy_root",
+            "root_schema",
+            "import_paths",
+            "module_name",
+            "root_type_name",
+            "compiler",
+            "cache_directory",
+            "data_hex",
+            "data_file",
+            "output",
+        },
+        {
+            "target_path",
+            "ksy_root",
+            "root_schema",
+            "module_name",
+            "root_type_name",
+            "compiler",
+        },
+    ),
+    "diff": ({"before", "after", "output"}, {"before", "after"}),
+    "launch": ({"wda_url", "bundle_id"}, {"wda_url", "bundle_id"}),
+    "mark": ({"label", "timestamp", "output"}, {"label"}),
+    "report": ({"events", "include_identifiers", "include_raw", "output"}, set()),
+    "screenshot": ({"wda_url", "bundle_id", "output"}, {"wda_url", "bundle_id"}),
+    "swipe": ({"wda_url", "bundle_id", "name", "start", "end"}, {"wda_url", "bundle_id", "name", "start", "end"}),
+    "tap": ({"wda_url", "bundle_id", "name"}, {"wda_url", "bundle_id", "name"}),
+    "type": ({"wda_url", "bundle_id", "name", "text"}, {"wda_url", "bundle_id", "name", "text"}),
+    "wait": ({"seconds"}, {"seconds"}),
+}
+STEP_KINDS: Final = frozenset(STEP_ARGUMENTS)
 _INLINE_SHELL_FLAGS: Final = {
     "bash": frozenset({"-c"}),
     "cmd": frozenset({"/c", "/k"}),

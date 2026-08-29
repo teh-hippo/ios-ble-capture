@@ -11,7 +11,7 @@ import pytest  # noqa: TC002
 import ios_ble_capture.executor as executor_module
 from ios_ble_capture import cli
 from ios_ble_capture.capture import write_raw_run
-from ios_ble_capture.cli import COMMANDS, run
+from ios_ble_capture.cli import run
 from ios_ble_capture.models import AttEvent, Direction
 
 if TYPE_CHECKING:
@@ -58,10 +58,6 @@ def _event(value: bytes = b"\x01\x02") -> AttEvent:
         attribute_handle=1,
         value=value,
     )
-
-
-def test_parser_exposes_working_commands() -> None:
-    assert COMMANDS == ("capture", "import", "mark", "attribute", "segment", "decode", "diff", "report", "run", "ble")
 
 
 def test_capture_dry_run_builds_an_explicit_plan(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:

@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypedDict
+from dataclasses import asdict, dataclass
+from typing import TYPE_CHECKING, TypedDict, cast
 
 from ios_ble_capture.redaction import RedactionPolicy, RenderedPayloadRecord, render_payload
 
@@ -43,13 +43,7 @@ class JsonDifference:
     def to_record(self) -> dict[str, JsonValue]:
         """Return a JSON-compatible difference record."""
 
-        return {
-            "path": self.path,
-            "before_present": self.before_present,
-            "before": self.before,
-            "after_present": self.after_present,
-            "after": self.after,
-        }
+        return cast("dict[str, JsonValue]", asdict(self))
 
 
 def report_event(event: AttEvent, policy: RedactionPolicy | None = None) -> EventReportRecord:

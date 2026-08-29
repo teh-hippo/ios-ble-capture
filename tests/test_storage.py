@@ -16,11 +16,18 @@ from ios_ble_capture.storage import (
     load_action_marks,
     private_child,
     require_private_run_directory,
+    write_private_chunks,
     write_private_text,
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from pathlib import Path
+
+
+class _FailingChunks:
+    def __iter__(self) -> Iterator[bytes]:
+        raise OSError("source iteration failed")
 
 
 def test_private_storage_enforces_run_and_file_permissions(tmp_path: Path) -> None:
@@ -53,3 +60,12 @@ def test_private_children_cannot_escape_the_run_directory(tmp_path: Path) -> Non
 
     with pytest.raises(StorageError, match="without directory components"):
         private_child(directory, "../outside.json")
+
+
+def test_private_chunk_source_errors_are_not_storage_errors(tmp_path: Path) -> None:
+    path = tmp_path / "events.jsonl"
+
+    with pytest.raises(OSError, match="source iteration failed"):
+        write_private_chunks(path, _FailingChunks())
+
+    assert not path.exists()

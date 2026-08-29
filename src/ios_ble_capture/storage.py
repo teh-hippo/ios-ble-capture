@@ -49,14 +49,19 @@ def private_child(directory: Path, name: str) -> Path:
 def write_private_bytes(path: Path, data: bytes) -> Path:
     """Write bytes with a private file mode."""
 
-    _write_private(path, data)
-    return path
+    return write_private_chunks(path, (data,))
 
 
 def write_private_text(path: Path, text: str) -> Path:
     """Write UTF-8 text with a private file mode."""
 
-    _write_private(path, text.encode())
+    return write_private_chunks(path, (text.encode(),))
+
+
+def write_private_chunks(path: Path, chunks: Iterable[bytes]) -> Path:
+    """Write byte chunks incrementally with a private file mode."""
+
+    _write_private(path, chunks)
     return path
 
 
@@ -142,16 +147,28 @@ def _read_text(path: Path) -> str:
         raise StorageError(f"cannot read {path}: {error.strerror or error}") from error
 
 
-def _write_private(path: Path, data: bytes) -> None:
+def _write_private(path: Path, chunks: Iterable[bytes]) -> None:
     if path.is_symlink():
         raise StorageError(f"refusing to write through symbolic link: {path}")
+    iterator = iter(chunks)
+    source_error: OSError | None = None
     try:
         descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, PRIVATE_FILE_MODE)
         with os.fdopen(descriptor, "wb") as stream:
             os.fchmod(stream.fileno(), PRIVATE_FILE_MODE)
-            stream.write(data)
+            while True:
+                try:
+                    chunk = next(iterator)
+                except StopIteration:
+                    break
+                except OSError as error:
+                    source_error = error
+                    break
+                stream.write(chunk)
     except OSError as error:
         raise StorageError(f"cannot write {path}: {error.strerror or error}") from error
+    if source_error is not None:
+        raise source_error
     _require_mode(path, PRIVATE_FILE_MODE)
 
 

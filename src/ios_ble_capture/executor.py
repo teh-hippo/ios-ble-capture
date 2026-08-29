@@ -6,10 +6,11 @@ import json
 import math
 import os
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Protocol, cast
+from typing import TYPE_CHECKING, cast
 
 from ios_ble_capture.errors import RecipeError
 from ios_ble_capture.ios.capture import build_capture_plan
@@ -17,6 +18,7 @@ from ios_ble_capture.ios.config import HostPlatform, IosTarget
 from ios_ble_capture.ios.process import ProcessStarter, ProcessSupervisor, SubprocessStarter
 from ios_ble_capture.ios.wda import UrllibWdaTransport, WebDriverAgentClient
 from ios_ble_capture.kaitai import KaitaiCompilationRequest, compile_kaitai, decode_kaitai
+from ios_ble_capture.recipes import STEP_ARGUMENTS
 from ios_ble_capture.redaction import RedactionPolicy
 from ios_ble_capture.reporting import diff_decoded_json, render_decoded_json_diff, report_events
 from ios_ble_capture.segmentation import ActionMark
@@ -38,8 +40,7 @@ if TYPE_CHECKING:
 type JsonValue = bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"] | None
 
 
-class _ClientFactory(Protocol):
-    def __call__(self, wda_url: str) -> WebDriverAgentClient: ...
+type _ClientFactory = Callable[[str], WebDriverAgentClient]
 
 
 @dataclass(frozen=True, slots=True)
@@ -324,7 +325,10 @@ class RecipeExecutor:
     def _validate_recipe(self) -> None:  # noqa: PLR0912, C901
         for index, step in enumerate(self._recipe.steps, start=1):
             arguments = step.arguments
-            allowed, required = _step_arguments(step.kind)
+            try:
+                allowed, required = STEP_ARGUMENTS[step.kind]
+            except KeyError as error:
+                raise RecipeError(f"unsupported recipe step kind: {step.kind!r}") from error
             unknown = set(arguments) - allowed
             missing = required - set(arguments)
             if unknown:
@@ -435,52 +439,6 @@ class RecipeExecutor:
 
 def _default_client(wda_url: str) -> WebDriverAgentClient:
     return WebDriverAgentClient(UrllibWdaTransport(wda_url))
-
-
-def _step_arguments(kind: str) -> tuple[set[str], set[str]]:
-    definitions = {
-        "assert": ({"file", "equals"}, {"file", "equals"}),
-        "capture": ({"udid", "host", "output"}, {"udid", "host", "output"}),
-        "decode": (
-            {
-                "target_path",
-                "ksy_root",
-                "root_schema",
-                "import_paths",
-                "module_name",
-                "root_type_name",
-                "compiler",
-                "cache_directory",
-                "data_hex",
-                "data_file",
-                "output",
-            },
-            {
-                "target_path",
-                "ksy_root",
-                "root_schema",
-                "module_name",
-                "root_type_name",
-                "compiler",
-            },
-        ),
-        "diff": ({"before", "after", "output"}, {"before", "after"}),
-        "launch": ({"wda_url", "bundle_id"}, {"wda_url", "bundle_id"}),
-        "mark": ({"label", "timestamp", "output"}, {"label"}),
-        "report": (
-            {"events", "include_identifiers", "include_raw", "output"},
-            set(),
-        ),
-        "screenshot": ({"wda_url", "bundle_id", "output"}, {"wda_url", "bundle_id"}),
-        "swipe": ({"wda_url", "bundle_id", "name", "start", "end"}, {"wda_url", "bundle_id", "name", "start", "end"}),
-        "tap": ({"wda_url", "bundle_id", "name"}, {"wda_url", "bundle_id", "name"}),
-        "type": ({"wda_url", "bundle_id", "name", "text"}, {"wda_url", "bundle_id", "name", "text"}),
-        "wait": ({"seconds"}, {"seconds"}),
-    }
-    try:
-        return definitions[kind]
-    except KeyError as error:
-        raise RecipeError(f"unsupported recipe step kind: {kind!r}") from error
 
 
 def _json_value(value: object) -> JsonValue:

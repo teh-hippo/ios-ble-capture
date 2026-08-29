@@ -56,18 +56,6 @@ if TYPE_CHECKING:
     from ios_ble_capture.attribution import Source
     from ios_ble_capture.reporting import JsonValue
 
-COMMANDS = (
-    "capture",
-    "import",
-    "mark",
-    "attribute",
-    "segment",
-    "decode",
-    "diff",
-    "report",
-    "run",
-    "ble",
-)
 _SOURCE_VERSION = "0.1.0"
 
 
