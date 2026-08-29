@@ -4,13 +4,12 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from difflib import SequenceMatcher
 from typing import TYPE_CHECKING, TypedDict
 
 from ios_ble_capture.redaction import RedactionPolicy, RenderedPayloadRecord, render_payload
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
+    from collections.abc import Iterable
 
     from ios_ble_capture.models import AttEvent
 
@@ -29,38 +28,6 @@ class EventReportRecord(TypedDict):
     attribute_handle: int | None
     value_offset: int | None
     payload: RenderedPayloadRecord
-
-
-class BodyReportRecord(TypedDict):
-    name: str
-    source: str | None
-    source_redacted: bool
-    payload: RenderedPayloadRecord
-
-
-@dataclass(frozen=True, slots=True)
-class SelectedBody:
-    """A caller-selected opaque body with an optional source identifier."""
-
-    name: str
-    value: bytes
-    source: str | None = None
-
-
-@dataclass(frozen=True, slots=True)
-class EventDiff:
-    """Report-safe additions and removals between event sequences."""
-
-    removed: tuple[EventReportRecord, ...]
-    added: tuple[EventReportRecord, ...]
-
-
-@dataclass(frozen=True, slots=True)
-class BodyDiff:
-    """Report-safe additions and removals between selected body sequences."""
-
-    removed: tuple[BodyReportRecord, ...]
-    added: tuple[BodyReportRecord, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -143,77 +110,6 @@ def render_events_text(events: Iterable[AttEvent], policy: RedactionPolicy | Non
             ),
         )
     return "\n".join(lines)
-
-
-def report_body(body: SelectedBody, policy: RedactionPolicy | None = None) -> BodyReportRecord:
-    """Return one selected body with its payload rendered under one policy."""
-
-    effective_policy = policy or RedactionPolicy()
-    source, source_redacted = _report_identifier(body.source, effective_policy)
-    return {
-        "name": body.name,
-        "source": source,
-        "source_redacted": source_redacted,
-        "payload": render_payload(body.value, effective_policy).to_record(),
-    }
-
-
-def report_bodies(
-    bodies: Iterable[SelectedBody], policy: RedactionPolicy | None = None
-) -> tuple[BodyReportRecord, ...]:
-    """Return report-safe structured records for selected bodies."""
-
-    return tuple(report_body(body, policy) for body in bodies)
-
-
-def render_bodies_text(bodies: Iterable[SelectedBody], policy: RedactionPolicy | None = None) -> str:
-    """Render selected bodies as deterministic report-safe text lines."""
-
-    effective_policy = policy or RedactionPolicy()
-    return "\n".join(
-        (
-            f"{body.name} "
-            f"source={_render_identifier_text(body.source, effective_policy)} "
-            f"payload={render_payload(body.value, effective_policy).to_text()}"
-        )
-        for body in bodies
-    )
-
-
-def diff_events(
-    before: Sequence[AttEvent],
-    after: Sequence[AttEvent],
-    policy: RedactionPolicy | None = None,
-) -> EventDiff:
-    """Return report-safe event additions and removals."""
-
-    removed: list[EventReportRecord] = []
-    added: list[EventReportRecord] = []
-    matcher = SequenceMatcher(a=before, b=after, autojunk=False)
-    for operation, before_start, before_end, after_start, after_end in matcher.get_opcodes():
-        if operation in {"delete", "replace"}:
-            removed.extend(report_events(before[before_start:before_end], policy))
-        if operation in {"insert", "replace"}:
-            added.extend(report_events(after[after_start:after_end], policy))
-    return EventDiff(tuple(removed), tuple(added))
-
-
-def diff_bodies(
-    before: Sequence[SelectedBody],
-    after: Sequence[SelectedBody],
-    policy: RedactionPolicy | None = None,
-) -> BodyDiff:
-    """Return report-safe selected-body additions and removals."""
-
-    removed: list[BodyReportRecord] = []
-    added: list[BodyReportRecord] = []
-    matcher = SequenceMatcher(a=before, b=after, autojunk=False)
-    for operation, before_start, before_end, after_start, after_end in matcher.get_opcodes():
-        if operation in {"delete", "replace"}:
-            removed.extend(report_bodies(before[before_start:before_end], policy))
-        if operation in {"insert", "replace"}:
-            added.extend(report_bodies(after[after_start:after_end], policy))
-    return BodyDiff(tuple(removed), tuple(added))
 
 
 def diff_decoded_json(before: JsonValue, after: JsonValue) -> tuple[JsonDifference, ...]:
@@ -300,10 +196,3 @@ def _report_identifier(
     if value is None or policy.include_identifiers:
         return value, False
     return None, True
-
-
-def _render_identifier_text(value: str | None, policy: RedactionPolicy) -> str:
-    rendered, redacted = _report_identifier(value, policy)
-    if redacted:
-        return "<withheld>"
-    return rendered or "unattributed"

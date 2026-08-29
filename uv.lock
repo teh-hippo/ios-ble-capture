@@ -868,14 +868,12 @@ dependencies = [
 [package.optional-dependencies]
 all = [
     { name = "bleak" },
-    { name = "defusedxml" },
     { name = "pymobiledevice3" },
 ]
 ble = [
     { name = "bleak" },
 ]
 ios = [
-    { name = "defusedxml" },
     { name = "pymobiledevice3" },
 ]
 
@@ -890,8 +888,6 @@ dev = [
 requires-dist = [
     { name = "bleak", marker = "extra == 'all'", specifier = ">=0.21.0" },
     { name = "bleak", marker = "extra == 'ble'", specifier = ">=0.21.0" },
-    { name = "defusedxml", marker = "extra == 'all'", specifier = ">=0.7.1" },
-    { name = "defusedxml", marker = "extra == 'ios'", specifier = ">=0.7.1" },
     { name = "kaitaistruct", specifier = "==0.11" },
     { name = "pymobiledevice3", marker = "extra == 'all'", specifier = ">=10.7.4" },
     { name = "pymobiledevice3", marker = "extra == 'ios'", specifier = ">=10.7.4" },

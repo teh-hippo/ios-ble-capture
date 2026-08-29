@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 import signal
 import subprocess
@@ -13,6 +12,7 @@ from uuid import uuid4
 
 from ios_ble_capture.errors import HookExecutionError, PostHookError, RunInterruptedError
 from ios_ble_capture.models import RunMetadata
+from ios_ble_capture.storage import write_private_json
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator, Mapping, Sequence
@@ -111,7 +111,7 @@ def create_run_context(
         source=source,
         tool_version=tool_version,
     )
-    _write_private_json(directory / "run.json", metadata.to_record())
+    write_private_json(directory / "run.json", metadata.to_record())
     return RunContext(run_id=run_id, directory=directory, created_at=created_at)
 
 
@@ -223,11 +223,3 @@ def _default_run_root() -> Path:
     if state_home:
         return Path(state_home) / "ios-ble-capture" / "runs"
     return Path.home() / ".local" / "state" / "ios-ble-capture" / "runs"
-
-
-def _write_private_json(path: Path, value: object) -> None:
-    path.write_text(
-        f"{json.dumps(value, indent=2, sort_keys=True)}\n",
-        encoding="utf-8",
-    )
-    path.chmod(0o600)

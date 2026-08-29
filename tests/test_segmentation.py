@@ -11,7 +11,6 @@ from ios_ble_capture.segmentation import (
     dump_action_marks_jsonl,
     load_action_marks_jsonl,
     segment_events,
-    segment_transactions,
 )
 
 _BASE = datetime(2026, 8, 22, 12, tzinfo=UTC)
@@ -52,15 +51,3 @@ def test_marks_require_strict_timestamp_order() -> None:
 
     with pytest.raises(CaptureDataError, match="strictly increasing"):
         segment_events((), repeated)
-
-
-def test_transaction_segmentation_respects_connection_epochs_and_boundaries() -> None:
-    events = (_event(1), _event(2), _event(3, epoch=2), _event(4, epoch=2))
-
-    transactions = segment_transactions(events, boundary=lambda _previous, current: current.value == b"\x04")
-
-    assert [tuple(event.value for event in transaction.events) for transaction in transactions] == [
-        (b"\x01", b"\x02"),
-        (b"\x03",),
-        (b"\x04",),
-    ]

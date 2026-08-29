@@ -204,63 +204,6 @@ class BleSession:
             raise BleError("BLE session is closed")
 
 
-async def read(
-    session: BleSession,
-    *,
-    service_uuid: str | None,
-    characteristic_uuid: str | None,
-    timeout: float,
-    frame_size: int | None,
-) -> bytes:
-    """Read through an existing session."""
-    return await session.read(
-        service_uuid=service_uuid,
-        characteristic_uuid=characteristic_uuid,
-        timeout=timeout,
-        frame_size=frame_size,
-    )
-
-
-async def write(  # noqa: PLR0913
-    session: BleSession,
-    data: bytes | bytearray | memoryview,
-    *,
-    service_uuid: str | None,
-    characteristic_uuid: str | None,
-    response: bool,
-    timeout: float,
-    frame_size: int | None,
-) -> None:
-    """Write through an existing session."""
-    await session.write(
-        data,
-        service_uuid=service_uuid,
-        characteristic_uuid=characteristic_uuid,
-        response=response,
-        timeout=timeout,
-        frame_size=frame_size,
-    )
-
-
-async def notify(  # noqa: PLR0913
-    session: BleSession,
-    callback: NotificationCallback,
-    *,
-    service_uuid: str | None,
-    characteristic_uuid: str | None,
-    timeout: float,
-    frame_size: int | None,
-) -> None:
-    """Subscribe through an existing session."""
-    await session.notify(
-        callback,
-        service_uuid=service_uuid,
-        characteristic_uuid=characteristic_uuid,
-        timeout=timeout,
-        frame_size=frame_size,
-    )
-
-
 class _BleakScanner(Protocol):
     @classmethod
     async def discover(cls, *, timeout: float, return_adv: bool) -> Mapping[str, object]: ...

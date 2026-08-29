@@ -33,22 +33,6 @@ class Command:
             raise ProcessError("command arguments cannot be empty")
 
 
-@dataclass(frozen=True, slots=True)
-class CommandResult:
-    """Captured result of a command that ran to completion."""
-
-    returncode: int
-    stdout: str
-    stderr: str
-
-
-class CommandRunner(Protocol):
-    """Runs a finite command."""
-
-    def run(self, command: Command, *, timeout: float | None = None) -> CommandResult:
-        """Run a command and return its captured result."""
-
-
 class ManagedProcess(Protocol):
     """A process which this package owns and can stop."""
 
@@ -74,22 +58,6 @@ class ProcessStarter(Protocol):
 
 def _environment(overrides: Mapping[str, str]) -> dict[str, str]:
     return {**os.environ, **overrides}
-
-
-class SubprocessRunner:
-    """Command runner backed by :mod:`subprocess`."""
-
-    def run(self, command: Command, *, timeout: float | None = None) -> CommandResult:
-        completed = subprocess.run(  # noqa: S603
-            command.argv,
-            check=False,
-            cwd=command.cwd,
-            env=_environment(command.environment),
-            text=True,
-            capture_output=True,
-            timeout=timeout,
-        )
-        return CommandResult(completed.returncode, completed.stdout, completed.stderr)
 
 
 class _OwnedSubprocess:

@@ -18,10 +18,7 @@ from ios_ble_capture.ble import (
     BleSession,
     NotificationCallback,
     connect,
-    notify,
-    read,
     scan,
-    write,
 )
 
 if TYPE_CHECKING:
@@ -163,8 +160,7 @@ def test_read_and_write_propagate_explicit_uuids_and_response_mode() -> None:
 
     async def exercise() -> BleSession:
         session = await connect(address="AA:BB:CC:DD:EE:FF", timeout=2, backend=backend)
-        await write(
-            session,
+        await session.write(
             b"\x01\x02",
             service_uuid=_SERVICE_UUID,
             characteristic_uuid=_CHARACTERISTIC_UUID,
@@ -173,8 +169,7 @@ def test_read_and_write_propagate_explicit_uuids_and_response_mode() -> None:
             frame_size=2,
         )
         assert (
-            await read(
-                session,
+            await session.read(
                 service_uuid=_SERVICE_UUID,
                 characteristic_uuid=_CHARACTERISTIC_UUID,
                 timeout=2,
@@ -217,8 +212,7 @@ def test_notifications_validate_frames_and_preserve_endpoint() -> None:
 
     async def exercise() -> None:
         session = await connect(address="AA:BB", timeout=1, backend=backend)
-        await notify(
-            session,
+        await session.notify(
             received.append,
             service_uuid=_SERVICE_UUID,
             characteristic_uuid=_CHARACTERISTIC_UUID,

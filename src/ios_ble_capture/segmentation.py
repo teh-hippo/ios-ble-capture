@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from itertools import pairwise
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 from ios_ble_capture.errors import CaptureDataError
-from ios_ble_capture.models import AttEvent
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
+    from ios_ble_capture.models import AttEvent
 
 
 class ActionMarkRecord(TypedDict):
@@ -62,29 +65,6 @@ class EventSegment:
     start: datetime
     end: datetime | None
     events: tuple[AttEvent, ...]
-
-
-@dataclass(frozen=True, slots=True)
-class Transaction:
-    """A contiguous event group that does not cross a connection epoch."""
-
-    ordinal: int
-    events: tuple[AttEvent, ...]
-
-    @property
-    def start(self) -> datetime:
-        """Return the timestamp of the first event."""
-
-        return self.events[0].timestamp
-
-    @property
-    def end(self) -> datetime:
-        """Return the timestamp of the final event."""
-
-        return self.events[-1].timestamp
-
-
-TransactionBoundary = Callable[[AttEvent, AttEvent], bool]
 
 
 def load_action_marks_jsonl(lines: Iterable[str]) -> tuple[ActionMark, ...]:
@@ -153,31 +133,6 @@ def segment_events(
         )
         segments.append(EventSegment(mark.label, mark.timestamp, end, selected))
     return tuple(segments)
-
-
-def segment_transactions(
-    events: Iterable[AttEvent],
-    *,
-    boundary: TransactionBoundary | None = None,
-) -> tuple[Transaction, ...]:
-    """Group events until a caller boundary or a connection-epoch change."""
-
-    event_list = tuple(events)
-    _validate_event_order(event_list)
-    if not event_list:
-        return ()
-
-    groups: list[list[AttEvent]] = [[event_list[0]]]
-    for event in event_list[1:]:
-        previous = groups[-1][-1]
-        crosses_connection = (
-            event.connection_handle != previous.connection_handle or event.connection_epoch != previous.connection_epoch
-        )
-        if crosses_connection or (boundary is not None and boundary(previous, event)):
-            groups.append([event])
-        else:
-            groups[-1].append(event)
-    return tuple(Transaction(index, tuple(group)) for index, group in enumerate(groups, start=1))
 
 
 def _validate_mark_order(marks: Sequence[ActionMark]) -> None:

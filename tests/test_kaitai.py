@@ -10,9 +10,6 @@ import pytest
 from ios_ble_capture.kaitai import (
     KaitaiCompilationRequest,
     KaitaiConfigurationError,
-    KaitaiFixture,
-    KaitaiFixtureError,
-    assert_kaitai_fixture,
     compile_kaitai,
     decode_kaitai,
 )
@@ -37,7 +34,7 @@ def test_compilation_cache_uses_schema_content_not_meta_id(tmp_path: Path, monke
     assert not second_result.output_path.is_relative_to(request.target_path)
     assert decode_kaitai(first_result, b"\x01") == {"marker": "one", "payload": "01", "size": 1}
     assert decode_kaitai(second_result, b"\x01\x02") == {"marker": "two", "payload": "0102", "size": 2}
-    assert json.loads(json.dumps(first_result.to_record()))["root_identity"] == "shared-root"
+    assert json.loads(json.dumps(first_result.to_record()))["root_schema"].endswith("message.ksy")
 
 
 def test_compilation_hashes_imported_schemas(tmp_path: Path) -> None:
@@ -65,23 +62,6 @@ def test_compilation_cache_changes_with_runtime_version(
     assert second.runtime_version == "0.11"
 
 
-def test_fixture_checks_decoded_output_and_raw_round_trip(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    _install_fake_runtime(monkeypatch)
-    result = compile_kaitai(_request(tmp_path, _fake_compiler(tmp_path), target_name="target", marker="fixture"))
-
-    decoded = assert_kaitai_fixture(
-        result,
-        KaitaiFixture(
-            data=b"\x01\x02",
-            expected={"marker": "fixture", "payload": "0102", "size": 2},
-            round_trip_bytes=b"\x01\x02",
-        ),
-    )
-
-    assert isinstance(decoded, dict)
-    assert decoded["marker"] == "fixture"
-
-
 def test_cache_directory_inside_target_is_refused(tmp_path: Path) -> None:
     request = _request(tmp_path, _fake_compiler(tmp_path), target_name="target", marker="one")
     invalid = KaitaiCompilationRequest(
@@ -89,13 +69,10 @@ def test_cache_directory_inside_target_is_refused(tmp_path: Path) -> None:
         ksy_root=request.ksy_root,
         root_schema=request.root_schema,
         import_paths=request.import_paths,
-        output_language=request.output_language,
-        root_identity=request.root_identity,
         module_name=request.module_name,
         root_type_name=request.root_type_name,
         compiler_executable=request.compiler_executable,
         cache_directory=request.target_path / "cache",
-        target_output_path=request.target_output_path,
     )
 
     with pytest.raises(KaitaiConfigurationError, match="outside the target"):
@@ -125,13 +102,10 @@ def _request(
         ksy_root=ksy_root,
         root_schema=ksy_root / "message.ksy",
         import_paths=(),
-        output_language="python",
-        root_identity="shared-root",
         module_name="message",
         root_type_name="Message",
         compiler_executable=compiler,
         cache_directory=tmp_path / "cache",
-        target_output_path=target / "generated" / "message.py",
     )
 
 
@@ -154,13 +128,10 @@ output.joinpath("message.py").write_text(
     "    def __init__(self, stream):\\n"
     f"        self.marker = {marker!r}\\n"
     "        self._stream = stream\\n"
+    "        self._read()\\n"
     "    def _read(self):\\n"
     "        self.payload = self._stream._io.read()\\n"
     "        self.size = len(self.payload)\\n"
-    "    def _check(self):\\n"
-    "        return None\\n"
-    "    def _write(self, stream):\\n"
-    "        stream._io.write(self.payload)\\n"
 )
 """,
         encoding="utf-8",
@@ -176,20 +147,5 @@ def _install_fake_runtime(monkeypatch: pytest.MonkeyPatch) -> None:
         def __init__(self, stream: BytesIO) -> None:
             self._io = stream
 
-        def to_byte_array(self) -> bytes:
-            position = self._io.tell()
-            self._io.seek(0)
-            data = self._io.read()
-            self._io.seek(position)
-            return bytes(data)
-
     runtime.KaitaiStream = KaitaiStream  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "kaitaistruct", runtime)
-
-
-def test_fixture_mismatch_is_reported(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    _install_fake_runtime(monkeypatch)
-    result = compile_kaitai(_request(tmp_path, _fake_compiler(tmp_path), target_name="target", marker="fixture"))
-
-    with pytest.raises(KaitaiFixtureError, match="decoded fixture"):
-        assert_kaitai_fixture(result, KaitaiFixture(data=b"\x01", expected={"marker": "incorrect"}))

@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 import pytest
 
 from ios_ble_capture.ios.wda import (
-    FileSessionStore,
     WdaAmbiguousElementError,
     WdaError,
     WdaNotDisplayedError,
@@ -15,7 +14,6 @@ from ios_ble_capture.ios.wda import (
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
-    from pathlib import Path
 
 
 def _source(body: str) -> str:
@@ -54,11 +52,14 @@ def test_named_wda_action_refuses_a_control_above_the_application_frame() -> Non
         select_named_element(source, "Continue")
 
 
+def test_wda_source_rejects_entity_declarations() -> None:
+    with pytest.raises(WdaError, match="prohibited XML"):
+        select_named_element("<!DOCTYPE application [<!ENTITY x 'Continue'>]><application/>", "Continue")
+
+
 class _Transport:
     def __init__(self) -> None:
-        self.requests: list[tuple[str, str]] = []
-        self.live_sessions: set[str] = set()
-        self.next_session = 1
+        self.requests: list[tuple[str, str, Mapping[str, object] | None]] = []
 
     def request(
         self,
@@ -68,70 +69,26 @@ class _Transport:
         *,
         timeout: float | None = None,
     ) -> Mapping[str, object]:
-        del payload, timeout
-        self.requests.append((method, path))
-        if method == "GET" and path.endswith("/source"):
-            session_id = path.split("/")[2]
-            if session_id not in self.live_sessions:
-                raise WdaError("session is not live")
-            return {"value": _source("")}
+        del timeout
+        self.requests.append((method, path, payload))
         if method == "POST" and path == "/session":
-            session_id = f"session-{self.next_session}"
-            self.next_session += 1
-            self.live_sessions.add(session_id)
-            return {"sessionId": session_id}
+            return {"sessionId": "session-1"}
         raise AssertionError((method, path))
 
 
-def test_cached_wda_session_is_bound_to_target_and_bundle(tmp_path: Path) -> None:
+def test_wda_client_opens_the_explicit_bundle() -> None:
     transport = _Transport()
-    store = FileSessionStore(tmp_path / "session.json")
+    client = WebDriverAgentClient(transport)
 
-    first = WebDriverAgentClient(
-        transport,
-        sessions=store,
-        target_id="phone-a",
-    )
-    assert first.open("com.example.one") == "session-1"
-
-    reused = WebDriverAgentClient(
-        transport,
-        sessions=store,
-        target_id="phone-a",
-    )
-    assert reused.open("com.example.one") == "session-1"
-
-    different_bundle = WebDriverAgentClient(
-        transport,
-        sessions=store,
-        target_id="phone-a",
-    )
-    assert different_bundle.open("com.example.two") == "session-2"
-
-    different_target = WebDriverAgentClient(
-        transport,
-        sessions=store,
-        target_id="phone-b",
-    )
-    assert different_target.open("com.example.two") == "session-3"
-    assert [request for request in transport.requests if request == ("POST", "/session")] == [
-        ("POST", "/session"),
-        ("POST", "/session"),
-        ("POST", "/session"),
-    ]
-
-
-def test_session_store_requires_an_explicit_target(tmp_path: Path) -> None:
-    with pytest.raises(WdaError, match="target identifier"):
-        WebDriverAgentClient(
-            _Transport(),
-            sessions=FileSessionStore(tmp_path / "session.json"),
+    assert client.open("com.example.app") == "session-1"
+    assert client.session_id == "session-1"
+    assert transport.requests == [
+        (
+            "POST",
+            "/session",
+            {
+                "capabilities": {"alwaysMatch": {"bundleId": "com.example.app"}},
+                "desiredCapabilities": {"bundleId": "com.example.app"},
+            },
         )
-
-
-def test_session_store_rejects_invalid_cached_fields(tmp_path: Path) -> None:
-    path = tmp_path / "session.json"
-    path.write_text('{"bundle_id":null,"session_id":"one","target_id":"phone"}')
-
-    with pytest.raises(WdaError, match="non-empty strings"):
-        FileSessionStore(path).load()
+    ]

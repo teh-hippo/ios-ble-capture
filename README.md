@@ -1,17 +1,16 @@
 # ios-ble-capture
 
-Vendor-neutral tools for acquiring iPhone Bluetooth logs, attributing BLE traffic, segmenting protocol transactions, decoding target-owned [Kaitai Struct](https://kaitai.io/) schemas and comparing structured observations.
+Vendor-neutral tools for acquiring iPhone Bluetooth logs, attributing and segmenting BLE traffic, decoding target-owned [Kaitai Struct](https://kaitai.io/) schemas and comparing structured observations.
 
 The project contains reusable capture and analysis mechanisms.  It does not contain vendor protocol schemas, vendor application recipes, product-specific integration logic, real captures, device identity or credentials.
 
 ## Capabilities
 
 - `idevicebtlogger` classic pcap and `pymobiledevice3` pcapng acquisition;
-- native Linux and WSL iPhone ownership mechanisms, with Windows assistance;
-- WebDriverAgent launch, forwarding, session reuse, accessibility inspection, gestures and screenshots;
+- WebDriverAgent HTTP sessions, accessibility inspection, gestures and screenshots;
 - pcap and pcapng import with HCI, ACL, L2CAP and ATT normalisation;
 - connection-epoch and peer attribution with unsafe ambiguity refusal;
-- timestamped action marks and vendor-neutral transaction segmentation;
+- timestamped action marks and vendor-neutral event segmentation;
 - official Kaitai compiler orchestration for target-owned schemas;
 - generic BLE scan, connect, read, write and notify operations through [Bleak](https://bleak.readthedocs.io/);
 - declarative JSON recipes with controlled pre-run and guaranteed post-run hooks;
@@ -25,7 +24,7 @@ The package requires Python 3.12 or later.  [`uv tool install`](https://docs.ast
 uv tool install 'ios-ble-capture[all]'
 ```
 
-Install the official [Kaitai Struct Compiler](https://kaitai.io/#download) separately for schema compilation.  WebDriverAgent signing also requires `zsign` when that workflow is used.
+Install the official [Kaitai Struct Compiler](https://kaitai.io/#download) separately for schema compilation.
 
 ## Capture and import
 
@@ -53,19 +52,17 @@ Use `mark`, `attribute`, `segment` and `report` against the resulting run files.
 
 ## Decode and compare
 
-Schemas stay in the target repository.  Decode requires explicit schema identity, compiler, cache and output paths:
+Schemas stay in the target repository.  Decode requires an explicit schema, generated module and type, compiler and cache:
 
 ```bash
 ios-ble-capture decode \
   --target-path "$PWD" \
   --ksy-root "$PWD/protocol" \
   --root-schema message.ksy \
-  --root-identity message \
   --module-name message \
   --root-type-name Message \
   --compiler kaitai-struct-compiler \
   --cache-directory "$HOME/.cache/ios-ble-capture/kaitai" \
-  --target-output-path "$PWD/generated" \
   --data-file body.bin \
   --output decoded.json
 ```
@@ -89,7 +86,7 @@ No vendor UUID, frame length, name prefix or checksum is a framework default.
 
 ## Method
 
-Use the [capture-to-schema methodology](docs/methodology.md) when deriving or revising a protocol.  [Host support](docs/host-support.md) identifies the migrated native, WSL and Windows mechanisms.  The [recipe reference](docs/recipes.md) documents built-in automation.  Complete the [hardware validation checklist](docs/hardware-validation.md) before replacing an existing physical rig.
+Use the [capture-to-schema methodology](docs/methodology.md) when deriving or revising a protocol.  [Host support](docs/host-support.md) describes capture constraints and external prerequisites.  The [recipe reference](docs/recipes.md) documents built-in automation.  Complete the [hardware validation checklist](docs/hardware-validation.md) before replacing an existing physical rig.
 
 The [`pymobiledevice3` project](https://github.com/doronz88/pymobiledevice3) is authoritative for its iOS service and tunnel support.  Physical capture remains outside the development container.
 

@@ -16,11 +16,9 @@
         "target_path": ".",
         "ksy_root": ".",
         "root_schema": "protocol.ksy",
-        "root_identity": "synthetic_message",
         "module_name": "synthetic_message",
         "root_type_name": "SyntheticMessage",
         "compiler": "kaitai-struct-compiler",
-        "target_output_path": "generated",
         "data_hex": "10 03 32 33 34 45",
         "output": "decoded.json"
       }

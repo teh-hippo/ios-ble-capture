@@ -469,12 +469,10 @@ def _add_kaitai_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--ksy-root", type=Path, required=True)
     parser.add_argument("--root-schema", type=Path, required=True)
     parser.add_argument("--import-path", type=Path, action="append", default=[])
-    parser.add_argument("--root-identity", required=True)
     parser.add_argument("--module-name", required=True)
     parser.add_argument("--root-type-name", required=True)
     parser.add_argument("--compiler", required=True)
     parser.add_argument("--cache-directory", type=Path, required=True)
-    parser.add_argument("--target-output-path", type=Path, required=True)
 
 
 def _add_active_ble_arguments(parser: argparse.ArgumentParser, *, endpoint: bool) -> None:
@@ -491,21 +489,15 @@ def _kaitai_request(args: argparse.Namespace) -> KaitaiCompilationRequest:
     ksy_root = args.ksy_root.resolve()
     if not ksy_root.is_relative_to(target_path):
         raise CaptureDataError("KSY root must be contained by target path")
-    target_output_path = args.target_output_path.resolve()
-    if not target_output_path.is_relative_to(target_path):
-        raise CaptureDataError("target output path must be contained by target path")
     return KaitaiCompilationRequest(
         target_path=target_path,
         ksy_root=ksy_root,
         root_schema=args.root_schema,
         import_paths=tuple(args.import_path),
-        output_language="python",
-        root_identity=args.root_identity,
         module_name=args.module_name,
         root_type_name=args.root_type_name,
         compiler_executable=args.compiler,
         cache_directory=args.cache_directory,
-        target_output_path=target_output_path,
     )
 
 

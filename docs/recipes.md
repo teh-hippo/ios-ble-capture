@@ -40,7 +40,7 @@ The optional `preflight` hook performs link-independent checks before the `pre_r
 | --- | --- | --- |
 | `assert` | `file`, `equals` | none |
 | `capture` | `udid`, `host`, `output` | none |
-| `decode` | `target_path`, `ksy_root`, `root_schema`, `root_identity`, `module_name`, `root_type_name`, `compiler`, `target_output_path`, exactly one of `data_hex` or `data_file` | `cache_directory`, `import_paths`, `output` |
+| `decode` | `target_path`, `ksy_root`, `root_schema`, `module_name`, `root_type_name`, `compiler`, exactly one of `data_hex` or `data_file` | `cache_directory`, `import_paths`, `output` |
 | `diff` | `before`, `after` | `output` |
 | `launch` | `wda_url`, `bundle_id` | none |
 | `mark` | `label` | `timestamp`, `output` |

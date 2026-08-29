@@ -9,7 +9,8 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Final
 
 from ios_ble_capture.errors import CaptureDataError
-from ios_ble_capture.models import AttEvent, Direction, RunMetadata
+from ios_ble_capture.models import AttEvent, Direction
+from ios_ble_capture.storage import PRIVATE_DIRECTORY_MODE, write_private_text
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
@@ -190,30 +191,17 @@ def import_capture(
 def write_raw_run(
     run_directory: Path,
     events: Iterable[AttEvent],
-    *,
-    metadata: RunMetadata | None = None,
 ) -> None:
     """Write unredacted JSONL event records into a private run directory."""
 
     if run_directory.exists() and not run_directory.is_dir():
         raise CaptureDataError(f"raw run path is not a directory: {run_directory}")
-    run_directory.mkdir(parents=True, exist_ok=True, mode=0o700)
-    run_directory.chmod(0o700)
-
-    events_path = run_directory / "events.jsonl"
-    with events_path.open("w", encoding="utf-8") as stream:
-        for event in events:
-            stream.write(json.dumps(event.to_record(), sort_keys=True, separators=(",", ":")))
-            stream.write("\n")
-    events_path.chmod(0o600)
-
-    if metadata is not None:
-        metadata_path = run_directory / "metadata.json"
-        metadata_path.write_text(
-            json.dumps(metadata.to_record(), sort_keys=True, separators=(",", ":")) + "\n",
-            encoding="utf-8",
-        )
-        metadata_path.chmod(0o600)
+    run_directory.mkdir(parents=True, exist_ok=True, mode=PRIVATE_DIRECTORY_MODE)
+    run_directory.chmod(PRIVATE_DIRECTORY_MODE)
+    write_private_text(
+        run_directory / "events.jsonl",
+        "".join(json.dumps(event.to_record(), sort_keys=True, separators=(",", ":")) + "\n" for event in events),
+    )
 
 
 def _iter_h4_packets(

@@ -261,9 +261,6 @@ class RecipeExecutor:
         ksy_root = self._external_path(self._required_string(arguments, "ksy_root", index), index)
         if not ksy_root.is_relative_to(target_path):
             raise RecipeError(f"step {index} KSY root must be inside target_path")
-        target_output_path = self._external_path(self._required_string(arguments, "target_output_path", index), index)
-        if not target_output_path.is_relative_to(target_path):
-            raise RecipeError(f"step {index} target_output_path must be inside target_path")
         cache_value = arguments.get("cache_directory")
         if cache_value is None:
             cache_home = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
@@ -280,13 +277,10 @@ class RecipeExecutor:
                 self._external_path(item, index)
                 for item in self._optional_string_list(arguments, "import_paths", index)
             ),
-            output_language="python",
-            root_identity=self._required_string(arguments, "root_identity", index),
             module_name=self._required_string(arguments, "module_name", index),
             root_type_name=self._required_string(arguments, "root_type_name", index),
             compiler_executable=self._required_string(arguments, "compiler", index),
             cache_directory=cache_directory,
-            target_output_path=target_output_path,
         )
 
     def _decode_data(self, arguments: Mapping[str, object], index: int) -> bytes:
@@ -453,12 +447,10 @@ def _step_arguments(kind: str) -> tuple[set[str], set[str]]:
                 "ksy_root",
                 "root_schema",
                 "import_paths",
-                "root_identity",
                 "module_name",
                 "root_type_name",
                 "compiler",
                 "cache_directory",
-                "target_output_path",
                 "data_hex",
                 "data_file",
                 "output",
@@ -467,11 +459,9 @@ def _step_arguments(kind: str) -> tuple[set[str], set[str]]:
                 "target_path",
                 "ksy_root",
                 "root_schema",
-                "root_identity",
                 "module_name",
                 "root_type_name",
                 "compiler",
-                "target_output_path",
             },
         ),
         "diff": ({"before", "after", "output"}, {"before", "after"}),

@@ -17,12 +17,10 @@ ble = [
     "bleak>=0.21.0",
 ]
 ios = [
-    "defusedxml>=0.7.1",
     "pymobiledevice3>=10.7.4",
 ]
 all = [
     "bleak>=0.21.0",
-    "defusedxml>=0.7.1",
     "pymobiledevice3>=10.7.4",
 ]
 

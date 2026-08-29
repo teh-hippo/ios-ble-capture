@@ -1,4 +1,4 @@
-"""Kaitai Struct compilation, decoding, and fixture support."""
+"""Kaitai Struct compilation and decoding."""
 
 from __future__ import annotations
 
@@ -12,17 +12,17 @@ import math
 import shutil
 import subprocess
 import sys
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Protocol, cast
+from typing import Any, cast
 from uuid import uuid4
 
 type JsonValue = bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"] | None
 
-_CACHE_FORMAT_VERSION = 2
+_CACHE_FORMAT_VERSION = 3
 _METADATA_FILE = "result.json"
 _OUTPUT_DIRECTORY = "output"
 
@@ -43,10 +43,6 @@ class KaitaiDecodeError(KaitaiError):
     """Raised when a generated parser cannot decode supplied bytes."""
 
 
-class KaitaiFixtureError(KaitaiDecodeError):
-    """Raised when decoded output differs from a supplied fixture."""
-
-
 @dataclass(frozen=True, slots=True)
 class KaitaiCompilationRequest:
     """Describes one cached Kaitai Struct compilation."""
@@ -55,13 +51,10 @@ class KaitaiCompilationRequest:
     ksy_root: Path
     root_schema: Path
     import_paths: tuple[Path, ...]
-    output_language: str
-    root_identity: str
     module_name: str
     root_type_name: str
     compiler_executable: Path | str
     cache_directory: Path
-    target_output_path: Path
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,12 +65,10 @@ class KaitaiCompilationResult:
     output_path: Path
     target_path: Path
     ksy_root: Path
+    root_schema: Path
     import_paths: tuple[Path, ...]
-    output_language: str
-    root_identity: str
     module_name: str
     root_type_name: str
-    target_output_path: Path
     compiler_version: str
     runtime_version: str | None
     schema_hashes: tuple[tuple[str, str], ...]
@@ -89,29 +80,14 @@ class KaitaiCompilationResult:
             "output_path": str(self.output_path),
             "target_path": str(self.target_path),
             "ksy_root": str(self.ksy_root),
+            "root_schema": str(self.root_schema),
             "import_paths": [str(path) for path in self.import_paths],
-            "output_language": self.output_language,
-            "root_identity": self.root_identity,
             "module_name": self.module_name,
             "root_type_name": self.root_type_name,
-            "target_output_path": str(self.target_output_path),
             "compiler_version": self.compiler_version,
             "runtime_version": self.runtime_version,
             "schema_hashes": dict(self.schema_hashes),
         }
-
-
-@dataclass(frozen=True, slots=True)
-class KaitaiFixture:
-    """Provides expected decoded output and an optional write-back assertion."""
-
-    data: bytes
-    expected: JsonValue
-    round_trip_bytes: bytes | None = None
-
-
-class _KaitaiStream(Protocol):
-    def to_byte_array(self) -> bytes: ...
 
 
 def compile_kaitai(request: KaitaiCompilationRequest) -> KaitaiCompilationResult:
@@ -143,12 +119,10 @@ def compile_kaitai(request: KaitaiCompilationRequest) -> KaitaiCompilationResult
             output_path=cache_item / _OUTPUT_DIRECTORY,
             target_path=validated.target_path,
             ksy_root=validated.ksy_root,
+            root_schema=validated.root_schema,
             import_paths=validated.import_paths,
-            output_language=validated.output_language,
-            root_identity=validated.root_identity,
             module_name=validated.module_name,
             root_type_name=validated.root_type_name,
-            target_output_path=validated.target_output_path,
             compiler_version=compiler_version,
             runtime_version=runtime_version,
             schema_hashes=schema_hashes,
@@ -170,11 +144,6 @@ def compile_kaitai(request: KaitaiCompilationRequest) -> KaitaiCompilationResult
 
 def load_parser(result: KaitaiCompilationResult) -> type[Any]:
     """Load the generated Python root type specified by a compilation result."""
-    if result.output_language != "python":
-        raise KaitaiConfigurationError(
-            f"Python decoding requires output language 'python', got {result.output_language!r}"
-        )
-
     module_path = result.output_path.joinpath(*result.module_name.split(".")).with_suffix(".py")
     if not module_path.is_file():
         raise KaitaiDecodeError(f"generated parser module is missing: {module_path}")
@@ -214,31 +183,12 @@ def decode_kaitai(result: KaitaiCompilationResult, data: bytes) -> JsonValue:
     return to_json_compatible(parsed)
 
 
-def assert_kaitai_fixture(result: KaitaiCompilationResult, fixture: KaitaiFixture) -> JsonValue:
-    """Decode a fixture and optionally verify its generated write-back bytes."""
-    parsed = _parse(result, fixture.data)
-    decoded = to_json_compatible(parsed)
-    if decoded != fixture.expected:
-        raise KaitaiFixtureError(
-            "decoded fixture does not match expected JSON: "
-            f"expected {json.dumps(fixture.expected, sort_keys=True)}, got {json.dumps(decoded, sort_keys=True)}"
-        )
-    if fixture.round_trip_bytes is not None:
-        round_trip = _write_back(parsed, len(fixture.data))
-        if round_trip != fixture.round_trip_bytes:
-            raise KaitaiFixtureError(
-                "generated parser write-back bytes do not match fixture: "
-                f"expected {fixture.round_trip_bytes.hex()}, got {round_trip.hex()}"
-            )
-    return decoded
-
-
 def to_json_compatible(value: object) -> JsonValue:
     """Convert parsed Kaitai values into values accepted by ``json.dumps``."""
     return _to_json_compatible(value, seen=set())
 
 
-def _validate_request(request: KaitaiCompilationRequest) -> KaitaiCompilationRequest:  # noqa: C901
+def _validate_request(request: KaitaiCompilationRequest) -> KaitaiCompilationRequest:
     target_path = request.target_path.resolve()
     ksy_root = request.ksy_root.resolve()
     root_schema = (
@@ -248,7 +198,6 @@ def _validate_request(request: KaitaiCompilationRequest) -> KaitaiCompilationReq
     )
     import_paths = tuple(path.resolve() for path in request.import_paths)
     cache_directory = request.cache_directory.resolve()
-    target_output_path = request.target_output_path.resolve()
 
     if not target_path.is_dir():
         raise KaitaiConfigurationError(f"target path does not exist: {target_path}")
@@ -258,12 +207,7 @@ def _validate_request(request: KaitaiCompilationRequest) -> KaitaiCompilationReq
         raise KaitaiConfigurationError(f"root schema must be an existing .ksy file: {root_schema}")
     if not root_schema.is_relative_to(ksy_root):
         raise KaitaiConfigurationError("root schema must be contained by the KSY root")
-    if not request.output_language.strip():
-        raise KaitaiConfigurationError("output language must be explicitly provided")
-    if request.output_language != "python":
-        raise KaitaiConfigurationError(f"unsupported Kaitai output language: {request.output_language!r}")
     for name, value in (
-        ("root identity", request.root_identity),
         ("module name", request.module_name),
         ("root type name", request.root_type_name),
     ):
@@ -280,13 +224,10 @@ def _validate_request(request: KaitaiCompilationRequest) -> KaitaiCompilationReq
         ksy_root=ksy_root,
         root_schema=root_schema,
         import_paths=import_paths,
-        output_language=request.output_language,
-        root_identity=request.root_identity,
         module_name=request.module_name,
         root_type_name=request.root_type_name,
         compiler_executable=request.compiler_executable,
         cache_directory=cache_directory,
-        target_output_path=target_output_path,
     )
 
 
@@ -329,11 +270,8 @@ def _cache_key(
         "ksy_root": str(request.ksy_root),
         "root_schema": str(request.root_schema),
         "import_paths": [str(path) for path in request.import_paths],
-        "output_language": request.output_language,
-        "root_identity": request.root_identity,
         "module_name": request.module_name,
         "root_type_name": request.root_type_name,
-        "target_output_path": str(request.target_output_path),
         "compiler_version": compiler_version,
         "runtime_version": runtime_version,
         "schema_hashes": schema_hashes,
@@ -345,8 +283,7 @@ def _run_compiler(request: KaitaiCompilationRequest, output_path: Path) -> None:
     command = [
         str(request.compiler_executable),
         "--target",
-        request.output_language,
-        "--read-write",
+        "python",
         "--outdir",
         str(output_path),
     ]
@@ -377,12 +314,10 @@ def _result_from_record(record: Mapping[str, object]) -> KaitaiCompilationResult
             output_path=Path(cast("str", record["output_path"])),
             target_path=Path(cast("str", record["target_path"])),
             ksy_root=Path(cast("str", record["ksy_root"])),
+            root_schema=Path(cast("str", record["root_schema"])),
             import_paths=tuple(Path(path) for path in cast("list[str]", record["import_paths"])),
-            output_language=cast("str", record["output_language"]),
-            root_identity=cast("str", record["root_identity"]),
             module_name=cast("str", record["module_name"]),
             root_type_name=cast("str", record["root_type_name"]),
-            target_output_path=Path(cast("str", record["target_output_path"])),
             compiler_version=cast("str", record["compiler_version"]),
             runtime_version=cast("str | None", record["runtime_version"]),
             schema_hashes=tuple(sorted(hashes.items())),
@@ -420,14 +355,7 @@ def _parse(result: KaitaiCompilationResult, data: bytes) -> object:
     except KaitaiError:
         raise
     except Exception as error:
-        raise KaitaiDecodeError(f"generated parser failed to decode {result.root_identity!r}: {error}") from error
-    reader = getattr(parsed, "_read", None)
-    if not callable(reader):
-        raise KaitaiDecodeError("generated parser does not support reading")
-    try:
-        reader()
-    except Exception as error:
-        raise KaitaiDecodeError(f"generated parser failed to decode {result.root_identity!r}: {error}") from error
+        raise KaitaiDecodeError(f"generated parser {result.root_type_name!r} failed to decode: {error}") from error
     return parsed
 
 
@@ -462,51 +390,5 @@ def _to_json_compatible(value: object, *, seen: set[int]) -> JsonValue:  # noqa:
         return {
             name: _to_json_compatible(item, seen=seen) for name, item in attributes.items() if not name.startswith("_")
         }
-    finally:
-        seen.remove(identity)
-
-
-def _write_back(parsed: object, input_length: int) -> bytes:
-    try:
-        runtime = importlib.import_module("kaitaistruct")
-        stream_type = runtime.KaitaiStream
-    except (ImportError, AttributeError) as error:
-        raise KaitaiDecodeError("the kaitaistruct runtime is required to write generated parsers") from error
-    writer = getattr(parsed, "_write", None)
-    if not callable(writer):
-        raise KaitaiDecodeError("generated parser does not support raw write-back")
-    _check_tree(parsed, seen=set())
-    stream = stream_type(io.BytesIO(bytes(input_length)))
-    try:
-        cast("Callable[[_KaitaiStream], None]", writer)(stream)
-        return bytes(stream.to_byte_array())
-    except Exception as error:
-        raise KaitaiDecodeError(f"generated parser failed to write bytes: {error}") from error
-
-
-def _check_tree(value: object, *, seen: set[int]) -> None:
-    identity = id(value)
-    if identity in seen:
-        return
-    try:
-        attributes = vars(value)
-    except TypeError:
-        return
-    seen.add(identity)
-    try:
-        for name, child in attributes.items():
-            if name.startswith("_"):
-                continue
-            if isinstance(child, (list, tuple, set, frozenset)):
-                for item in child:
-                    _check_tree(item, seen=seen)
-            elif isinstance(child, Mapping):
-                for item in child.values():
-                    _check_tree(item, seen=seen)
-            else:
-                _check_tree(child, seen=seen)
-        checker = getattr(value, "_check", None)
-        if callable(checker):
-            checker()
     finally:
         seen.remove(identity)
