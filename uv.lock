@@ -1679,7 +1679,7 @@ wheels = [
 
 [[package]]
 name = "pymobiledevice3"
-version = "11.15.4"
+version = "11.15.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiwebdav" },
@@ -1733,9 +1733,9 @@ dependencies = [
     { name = "wsproto" },
     { name = "xonsh" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4c/ff/13a8291319a42eb2a7ea7572670de8079b50b35dfd8c1d049b54159d92c8/pymobiledevice3-11.15.4.tar.gz", hash = "sha256:8cbad0516757a7f5d60a70efcdf435b0de2d1894976f9c33245f222d6bd0dfab", size = 1487408, upload-time = "2026-09-17T19:15:21.165Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7f/21/457f5bfc54d26894a7ea19a26b3a9732c08555329794916826be3c226385/pymobiledevice3-11.15.5.tar.gz", hash = "sha256:baa7d8e6acfd39eba6b293d32e41afb5d39222be35f4fa6afab1f1b170175b05", size = 1488692, upload-time = "2026-09-18T22:50:57.717Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/20/fd/a58518438acc24e0ba3d0d99c58937df6a67cfbbbc4707e471001188ec2f/pymobiledevice3-11.15.4-py3-none-any.whl", hash = "sha256:65c2eae51ba5b24c6ab98cb32d30d01818a1570a33b48d4dad29ee95c508b343", size = 1287791, upload-time = "2026-09-17T19:15:19.248Z" },
+    { url = "https://files.pythonhosted.org/packages/a1/46/a3748c7fbd4b592b434edc2b968e4ed4b133c2f3615d83fdcab49117e4ce/pymobiledevice3-11.15.5-py3-none-any.whl", hash = "sha256:ec70a39dca9453f6f2c17453e5cefe442db315582f55fb6f8b35bcd3d3fd80f1", size = 1288220, upload-time = "2026-09-18T22:50:55.932Z" },
 ]
 
 [[package]]
@@ -2217,11 +2217,11 @@ wheels = [
 
 [[package]]
 name = "wcwidth"
-version = "0.8.3"
+version = "0.8.4"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/36/57/ed58088fafdf4c55a0ad6bde846502567645424d7ebf325230b9237f4085/wcwidth-0.8.3.tar.gz", hash = "sha256:d128512515fbf4612e0ff21fd6380399210318b7b54a9af59dff8454cf9730eb", size = 1458450, upload-time = "2026-08-28T18:10:06.875Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3d/7a/f98d4ada7c499565ab0c0fcef28a4e54fafa72b8228a6309803c80493c92/wcwidth-0.8.4.tar.gz", hash = "sha256:2dae09efa25253ae2874188e86d6861af3b1652aef4118cdf3f0bda288a957fb", size = 414609, upload-time = "2026-09-17T23:31:45.287Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c4/0e/57f6bb3024a597b2e8ec4aee710ffe62ddc95af2e2bb1ee7a7abdc22c68c/wcwidth-0.8.3-py3-none-any.whl", hash = "sha256:d5b73dba6158a595ec9370350e7f2637bcac8d6c5e4fde34f30fcffb6103a5e4", size = 331669, upload-time = "2026-08-28T18:10:04.909Z" },
+    { url = "https://files.pythonhosted.org/packages/39/cc/9c0adc5861020de426ec71716b6c1bef8d90694b7d6d0a16202cdb1647f5/wcwidth-0.8.4-py3-none-any.whl", hash = "sha256:2097bb1d28a0ba8fe177c2eb607317f9b1627b03f33ebebfd3da670b337a65ba", size = 299474, upload-time = "2026-09-17T23:31:43.816Z" },
 ]
 
 [[package]]
