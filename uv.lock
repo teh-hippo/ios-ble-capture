@@ -1688,7 +1688,7 @@ wheels = [
 
 [[package]]
 name = "pymobiledevice3"
-version = "11.19.1"
+version = "11.19.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiwebdav" },
@@ -1743,9 +1743,9 @@ dependencies = [
     { name = "wsproto" },
     { name = "xonsh" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/75/74/bb02407aacb1e8b2de3a30a0d5884332c53d0bb082e96303d01075880fca/pymobiledevice3-11.19.1.tar.gz", hash = "sha256:b78ce3c2b1457861f78e6bfea34fe43cc446ef335b54369f94729179cdd34858", size = 1539804, upload-time = "2026-09-24T13:10:07.944Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/29/6c/c124334a029980f7f0d51e48e4636e5c52d274f62f153fca0d70bc7aa9be/pymobiledevice3-11.19.2.tar.gz", hash = "sha256:f3d555cd9572014d58c62776be748b9b640f63bf22c2e4743e1091847b16a703", size = 1540577, upload-time = "2026-09-26T16:06:54.467Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3c/1e/c10c3ed106243b9b392b0a5bba18a6b6dc66227d7ba1ee70007fa47270a1/pymobiledevice3-11.19.1-py3-none-any.whl", hash = "sha256:c1d324d1273bd970b3b5ac253c35ab9305cbfbc4b71a61736dec2f172d50fa24", size = 1315091, upload-time = "2026-09-24T13:10:05.672Z" },
+    { url = "https://files.pythonhosted.org/packages/97/86/9bd389273787a9b52a3502b476626136f10b1721779b0ece650bcea5779c/pymobiledevice3-11.19.2-py3-none-any.whl", hash = "sha256:96e3aafe0f5600556dbe59ff1f85215847f8ef47f1d9829d970e9803aa2546d8", size = 1315465, upload-time = "2026-09-26T16:06:52.574Z" },
 ]
 
 [[package]]
