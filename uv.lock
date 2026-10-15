@@ -788,7 +788,7 @@ wheels = [
 
 [[package]]
 name = "fastapi"
-version = "0.143.1"
+version = "0.143.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-doc" },
@@ -798,9 +798,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "typing-inspection" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/96/16/52ca959230f9820660fd822f488f883d7dc42310716b4cc6d2a944835dcd/fastapi-0.143.1.tar.gz", hash = "sha256:4cafaab64df8534758bf0fce61947f5e27e6cd512798ccbbaad5425086c3b664", size = 469025, upload-time = "2026-10-14T12:53:09.448Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/19/f5/4bbb2df9bb6f365151f2c02795ca3f17f78d08e670a394df963f3d8881ce/fastapi-0.143.2.tar.gz", hash = "sha256:e9e6d97018dcfd748da7d9e7c61cedefbe9eb91b1a3288e45b13fbae76df2d54", size = 468920, upload-time = "2026-10-15T13:34:21.679Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ca/73/30ee3dd8f26fd385e451bbded9e1b54766a277db588e70154dd894f4b698/fastapi-0.143.1-py3-none-any.whl", hash = "sha256:687beb445804e4c4dbe2a76fd83c25e9b973ac48c267defb86f791e099baecc4", size = 144682, upload-time = "2026-10-14T12:53:07.69Z" },
+    { url = "https://files.pythonhosted.org/packages/d5/5a/9a5fd06659a63e13e876dd660347c044b3954ede3db928c69df879fac02c/fastapi-0.143.2-py3-none-any.whl", hash = "sha256:da2fe9893b7392ebce76d8c8511e3fa43e5a25f5852103aa2eee7cff3ab80b75", size = 144690, upload-time = "2026-10-15T13:34:19.861Z" },
 ]
 
 [[package]]
@@ -1346,11 +1346,11 @@ wheels = [
 
 [[package]]
 name = "pluggy"
-version = "1.6.0"
+version = "1.7.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe6ef3fa267035b518369d9511ffab804f839851d2779/pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3", size = 69412, upload-time = "2025-05-15T12:30:07.975Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bf/db/7fc19e6f2dc92a966727031389fc2e08b558f0f25eb7403c1119ad4713cd/pluggy-1.7.0.tar.gz", hash = "sha256:d1eaa46ebb595891b860ab086b4d09c8588af65ebd4361b8e8f4bb8920b90ba8", size = 123304, upload-time = "2026-10-15T09:50:58.343Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
+    { url = "https://files.pythonhosted.org/packages/40/9e/2b38731e0fc536806f16490e1a12d7f0dc2a1235aa8cc07bcc75416a7daa/pluggy-1.7.0-py3-none-any.whl", hash = "sha256:7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec", size = 27082, upload-time = "2026-10-15T09:50:56.808Z" },
 ]
 
 [[package]]
@@ -1721,7 +1721,7 @@ wheels = [
 
 [[package]]
 name = "pymobiledevice3"
-version = "11.30.0"
+version = "11.31.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiwebdav" },
@@ -1772,9 +1772,9 @@ dependencies = [
     { name = "uvicorn" },
     { name = "wsproto" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/68/27/957fd6c1f12a276d0c137c982406f3d996c8640f0e1dba9d50051ad3fcd9/pymobiledevice3-11.30.0.tar.gz", hash = "sha256:1f7c4538600729d1be3919d858ceaceb4a0128d8ca3026f03ffaaebaf17c6622", size = 1651284, upload-time = "2026-10-14T15:36:56.253Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/81/709ec3efad93f99db02474a7572ce920faca21b51282f92230ec4061d7d5/pymobiledevice3-11.31.0.tar.gz", hash = "sha256:21d6e1d90b4758d06727711fc69399344b323b58d6afd47a3407db7b1cb33f4e", size = 1656026, upload-time = "2026-10-14T20:24:34.651Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b2/20/95caa5f70d7b39df0d3f638fb4bf817c821302f46960e9de7dc19afe213d/pymobiledevice3-11.30.0-py3-none-any.whl", hash = "sha256:eb1f806e025694c8167e486cd82c53c859f64dc32a858c0056ac455ffae92a0d", size = 1379602, upload-time = "2026-10-14T15:36:53.509Z" },
+    { url = "https://files.pythonhosted.org/packages/dc/60/827fc0fb58ac95e720f8c07975f14fd4d1b884be5ead69565546886acce1/pymobiledevice3-11.31.0-py3-none-any.whl", hash = "sha256:69c18d5b8bce632ce21c20c31c657a854eff5b30c198c1bc61bccc5b4e627e55", size = 1381455, upload-time = "2026-10-14T20:24:32.624Z" },
 ]
 
 [[package]]
