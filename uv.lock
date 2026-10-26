@@ -1755,7 +1755,7 @@ wheels = [
 
 [[package]]
 name = "pymobiledevice3"
-version = "11.44.0"
+version = "11.45.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansilogs" },
@@ -1804,9 +1804,9 @@ dependencies = [
     { name = "uvicorn" },
     { name = "wsproto" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6a/5c/f8b5c0ee52169f2c80584b7efc6fd2f417e8802d1a6455418185589dd1a5/pymobiledevice3-11.44.0.tar.gz", hash = "sha256:92e32e8278c7a6584d51c645a5d603e5de89deb8391462cdab5d1ac06e48af51", size = 1719092, upload-time = "2026-10-24T17:08:22.138Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b0/32/47e3a8b38e139983b69432dd264fa972fba7fa62087d18538d192328c11c/pymobiledevice3-11.45.0.tar.gz", hash = "sha256:19ed34bdc02e32f2006f5539a86d5d2e4b4f1ae45200cf516ca9348d6f50a4c8", size = 1720557, upload-time = "2026-10-26T09:47:21.429Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/49/46/f51bdbf52653e0f61f39352d15e2ffb2e3df5853138270e6d8c6986c71a9/pymobiledevice3-11.44.0-py3-none-any.whl", hash = "sha256:0716227b6d2f597ec27fb3cbe4a4b6bbdc25160d9d9e1d28590b9bfad51a9d37", size = 1401148, upload-time = "2026-10-24T17:08:20.225Z" },
+    { url = "https://files.pythonhosted.org/packages/b6/22/d10e0ac6dbf5b69ef6021a5d055be0c0d5b1b9f1749020e11c3e225d7011/pymobiledevice3-11.45.0-py3-none-any.whl", hash = "sha256:f5ccfe6a7babd47765998c96b9f11f95cf095780c93ce444f7a45e500a6c3b3f", size = 1401918, upload-time = "2026-10-26T09:47:18.626Z" },
 ]
 
 [[package]]
@@ -2117,14 +2117,11 @@ wheels = [
 
 [[package]]
 name = "srptools"
-version = "1.0.1"
+version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/a1/8a/d62af55a56d56216e96563bc9c29c2d16d957317742c2e5bd4e79a524b06/srptools-1.0.1.tar.gz", hash = "sha256:7fa4337256a1542e8f5bb4bed19e1d9aea98fe5ff9baf76693342a1dd6ac7c96", size = 15436, upload-time = "2020-09-12T02:06:28.244Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7c/70/eeb984c83b1313d8222a7ced3d764f250f76601a9bb8460d2a14c1d7faaf/srptools-2.0.0.tar.gz", hash = "sha256:3b5296fde4b70e76443bbeacc641f4e4125c81b6bd20e4e228bba340f00c06c5", size = 10711, upload-time = "2026-10-26T12:45:33.55Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8d/b8/3f935d7f7d6bc25a88859beb0a6e246313012a12ae4844665322f771a5cb/srptools-1.0.1-py2.py3-none-any.whl", hash = "sha256:fccb44c949eb2507ba19f349a3087cb8fed2393014d7f0887b06c3186f19d1e9", size = 13183, upload-time = "2020-09-12T02:06:30.452Z" },
+    { url = "https://files.pythonhosted.org/packages/72/90/a87a3f65f5d201e8732ad4ad9473ec24dc73c0e32764380b83604b8764e6/srptools-2.0.0-py3-none-any.whl", hash = "sha256:566b1cc55964996296b6389294c61f7ee8072f12de800bff4be625f79d930c9b", size = 13220, upload-time = "2026-10-26T12:45:32.12Z" },
 ]
 
 [[package]]
