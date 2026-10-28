@@ -905,7 +905,7 @@ dev = [
 
 [[package]]
 name = "ipsw-parser"
-version = "1.8.4"
+version = "1.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansilogs" },
@@ -915,9 +915,9 @@ dependencies = [
     { name = "requests" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d5/82/60b20090243c258542b51364787ada12e4edd6191c6022731955546bc7e0/ipsw_parser-1.8.4.tar.gz", hash = "sha256:72eda0985f1d39a8fe74385724598feaa2f95ed32cc519eae417d90addb9019d", size = 58821, upload-time = "2026-10-19T07:33:01.266Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/67/ca/3e29f8351ee71e31bc6ac67bfbe24405d84863416751fbf58c5385ad7e5c/ipsw_parser-1.9.0.tar.gz", hash = "sha256:4b2f355e0abd307458af4963f9d3aca4d4ab2d73a5f7100d59c000427e444109", size = 60564, upload-time = "2026-10-28T15:42:38.336Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/1c/497b1859fb47ad87c704fa269da94a962bfc5313ed5149a09e940599543f/ipsw_parser-1.8.4-py3-none-any.whl", hash = "sha256:59a0c5812af2870cddcb2812d6b3b0127f954b057c14268690896f3b3643701a", size = 40779, upload-time = "2026-10-19T07:32:59.754Z" },
+    { url = "https://files.pythonhosted.org/packages/f8/fe/6925e90fc6b8433884b756d0d5e68e540a3a49f9b3e6fba0bd333b2297cf/ipsw_parser-1.9.0-py3-none-any.whl", hash = "sha256:4705f50e49115d18941d18a732177edb2386824f69342befbb1dc828edd7fdfa", size = 41717, upload-time = "2026-10-28T15:42:37.05Z" },
 ]
 
 [[package]]
@@ -1241,15 +1241,15 @@ wheels = [
 
 [[package]]
 name = "opack2"
-version = "0.1.0"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "arrow" },
     { name = "bytestruct" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5d/8a/ac48f032c6e6fbb27733eae8dc51760cae02ad3c3be4252b124d38621fac/opack2-0.1.0.tar.gz", hash = "sha256:6164a950fba950a440696c77fe69f459288f76c26c7a3cff5f30e54aee9aa6ed", size = 42443, upload-time = "2026-10-17T11:38:24.783Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/22/02/f79f07f275aadb157361cc977629975ee936572140ce3a33715dbd6fc08e/opack2-0.2.0.tar.gz", hash = "sha256:997ab3fe4540610f10c8072a34fa69246c229b5e2bbf3f383cbe6f2884cbf1a4", size = 43914, upload-time = "2026-10-28T08:18:59.16Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/6e/a833a51158da05c4ad3fc30958f588c318cc66013816e5d53c8a38802ca2/opack2-0.1.0-py3-none-any.whl", hash = "sha256:0b9c5744c6bfe7bc3a9504d3fd5bade1ab4a2d6bcacb68b278dbd32dbc5de03f", size = 29862, upload-time = "2026-10-17T11:38:23.617Z" },
+    { url = "https://files.pythonhosted.org/packages/bf/5b/0b378be5e7459837f5a0541b1497a34b45d42bfd8fe52ebb0927367e02f4/opack2-0.2.0-py3-none-any.whl", hash = "sha256:7949ba4d36e1949a9637ba766c9094373f2e3f828afb7c8f8848d29717b38182", size = 30463, upload-time = "2026-10-28T08:18:57.666Z" },
 ]
 
 [[package]]
@@ -1755,7 +1755,7 @@ wheels = [
 
 [[package]]
 name = "pymobiledevice3"
-version = "11.45.0"
+version = "11.45.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansilogs" },
@@ -1796,7 +1796,6 @@ dependencies = [
     { name = "questionary" },
     { name = "requests" },
     { name = "rich" },
-    { name = "srptools" },
     { name = "sslpsk-pmd3", marker = "python_full_version < '3.13'" },
     { name = "typer" },
     { name = "typer-injector" },
@@ -1804,9 +1803,9 @@ dependencies = [
     { name = "uvicorn" },
     { name = "wsproto" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b0/32/47e3a8b38e139983b69432dd264fa972fba7fa62087d18538d192328c11c/pymobiledevice3-11.45.0.tar.gz", hash = "sha256:19ed34bdc02e32f2006f5539a86d5d2e4b4f1ae45200cf516ca9348d6f50a4c8", size = 1720557, upload-time = "2026-10-26T09:47:21.429Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1d/37/fb994a5b05fbc163177716efca5d0edd1e28ba02e31c9cdbbb7058c748de/pymobiledevice3-11.45.1.tar.gz", hash = "sha256:5d17b655454840aa0e44a00c88c36bb801c2c6d7f0e5a463cb0bc6e5740dbf21", size = 1723741, upload-time = "2026-10-28T06:45:41.79Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b6/22/d10e0ac6dbf5b69ef6021a5d055be0c0d5b1b9f1749020e11c3e225d7011/pymobiledevice3-11.45.0-py3-none-any.whl", hash = "sha256:f5ccfe6a7babd47765998c96b9f11f95cf095780c93ce444f7a45e500a6c3b3f", size = 1401918, upload-time = "2026-10-26T09:47:18.626Z" },
+    { url = "https://files.pythonhosted.org/packages/01/94/51d2ece630b71fafcaa89fd8f8868dc8277784cf213a82fc22971f5ea4ac/pymobiledevice3-11.45.1-py3-none-any.whl", hash = "sha256:1e8d4bdb1a854aadd8cd6e5c917ca014f13f41b64a7d44a407c8c329695e963e", size = 1403782, upload-time = "2026-10-28T06:45:38.852Z" },
 ]
 
 [[package]]
@@ -1882,7 +1881,7 @@ wheels = [
 
 [[package]]
 name = "pytest"
-version = "9.1.1"
+version = "9.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -1891,9 +1890,9 @@ dependencies = [
     { name = "pluggy" },
     { name = "pygments" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz", hash = "sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313", size = 1636369, upload-time = "2026-06-19T10:58:32.857Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/79/42/bb4641652e58dedeac2ec51abc1f8cae4fee4ec63899a0999016229a0f2a/pytest-9.2.0.tar.gz", hash = "sha256:97c4f3b1f3c7414aa36465e09b8220f1d03627993bd51b1282e193753c80557b", size = 1797555, upload-time = "2026-10-27T21:30:20.728Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl", hash = "sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c", size = 386536, upload-time = "2026-06-19T10:58:31.347Z" },
+    { url = "https://files.pythonhosted.org/packages/51/39/1f5d8c8877a0fa327db959c19341d4be61660de1ab6b7391f9eb805bcd67/pytest-9.2.0-py3-none-any.whl", hash = "sha256:07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588", size = 411776, upload-time = "2026-10-27T21:30:19.131Z" },
 ]
 
 [[package]]
@@ -2116,15 +2115,6 @@ wheels = [
 ]
 
 [[package]]
-name = "srptools"
-version = "2.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7c/70/eeb984c83b1313d8222a7ced3d764f250f76601a9bb8460d2a14c1d7faaf/srptools-2.0.0.tar.gz", hash = "sha256:3b5296fde4b70e76443bbeacc641f4e4125c81b6bd20e4e228bba340f00c06c5", size = 10711, upload-time = "2026-10-26T12:45:33.55Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/72/90/a87a3f65f5d201e8732ad4ad9473ec24dc73c0e32764380b83604b8764e6/srptools-2.0.0-py3-none-any.whl", hash = "sha256:566b1cc55964996296b6389294c61f7ee8072f12de800bff4be625f79d930c9b", size = 13220, upload-time = "2026-10-26T12:45:32.12Z" },
-]
-
-[[package]]
 name = "sslpsk-pmd3"
 version = "1.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2234,11 +2224,11 @@ wheels = [
 
 [[package]]
 name = "tzdata"
-version = "2026.5"
+version = "2026.6"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d9/68/f1b440335057bfce71b6e50a9d09445aa2ecbd08359a337976627b8409e7/tzdata-2026.5.tar.gz", hash = "sha256:8cc73c0a0bfca7dbfa59235d60b2eff82231dee33f53d206db1acd9173cfc0a7", size = 200404, upload-time = "2026-10-03T09:23:14.143Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7a/29/6a1391d31cd00ff9e927215a224a880e1e84e826b64ba80a499e51c074d8/tzdata-2026.6.tar.gz", hash = "sha256:85d2cd9c09f81f0bb29db27759fc83af4f1e620efb814f8c5bf8b4cc4feece6d", size = 201017, upload-time = "2026-10-28T09:57:09.137Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/94/21/1e5995a1c920cce14e4bffae20c665ec10e7ed03ab25e006cd741092b718/tzdata-2026.5-py2.py3-none-any.whl", hash = "sha256:b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac", size = 347996, upload-time = "2026-10-03T09:23:12.535Z" },
+    { url = "https://files.pythonhosted.org/packages/0a/66/9a06c2227fedfd4919f0eaaa8b94377d9730882a7e4f95823c9a331ab5e1/tzdata-2026.6-py2.py3-none-any.whl", hash = "sha256:0a10eec6e13ef16b627fabed9a5f2ba61a62b1c67f327305f4e7e412a70b4aec", size = 348210, upload-time = "2026-10-28T09:57:07.276Z" },
 ]
 
 [[package]]
